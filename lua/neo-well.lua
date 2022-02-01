@@ -96,6 +96,11 @@ end
 
 function M.neo_well_edit()
   if not cursor_on_the_qflist() then return end
+  local idx = vim.fn.line('.')
+  local items = vim.fn.getqflist({ items = 0 }).items
+  local input = vim.fn.input('Enter your new comment: ')
+  items[idx].text = input
+  vim.fn.setqflist({}, 'r', { items = items })
 end
 
 local function setup_vim_commands()
