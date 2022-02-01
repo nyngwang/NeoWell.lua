@@ -47,8 +47,9 @@ function M.neo_well_toggle()
     return
   end
   if not get_qflist_winid() then -- open the qflist first.
-    vim.cmd('copen ' .. M.height)
+    vim.cmd('copen')
     vim.cmd('wincmd J')
+    vim.cmd(M.height .. ' wincmd _')
   end
   switch_to_the_qflist()
 end
