@@ -110,6 +110,11 @@ function M.neo_well_out()
   if not cursor_on_the_qflist() then return end
   local idx = vim.fn.line('.')
   local items = vim.fn.getqflist({ items = 0 }).items
+  if #items == 0 then
+    vim.cmd('cclose')
+    return
+  end
+  if not vim.fn.input('Confirm delete item ' .. idx .. '(y/n): '):match('[Yy](es)?') then return end
   local new_items = {}
   for _idx, item in ipairs(items) do
     if _idx ~= idx then
