@@ -69,7 +69,7 @@ function M.neo_well_toggle()
 end
 
 function M.neo_well_append()
-  if not cursor_on_the_qflist() then return end
+  if vim.bo.buftype == 'quickfix' then return end
   local input = vim.fn.input('Well ... ')
   if input == '' or input:match('^%s+$') then -- nothing added.
     print('cancelled.')
