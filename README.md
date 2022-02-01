@@ -5,6 +5,7 @@ NeoWell.lua
 
 - Toggle the only NeoWell list
   - Leave existing ones **intact**
+  - List shown in the very bottom (to put emphasis on that it's global)
 
 
 ### Usage
@@ -19,6 +20,7 @@ vim.keymap.set('n', '\\', function () vim.cmd('NeoWellToggle') end, NOREF_NOERR_
 ### TODO list
 
 - [x] toggle the list
+  - [x] move to the bottom window
 - [ ] prompt: to add the current line into items
 - [ ] buffer command:
   - [ ] goto item
