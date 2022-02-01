@@ -36,14 +36,14 @@ end
 
 ---------------------------------------------------------------------------------------------------
 function M.neo_well_toggle()
+  if get_qflist_winid() and vim.fn.getqflist({ title = 0 }).title == NAME_OF_THE_LIST then
+    vim.cmd('cclose')
+    return
+  end
   if not get_qflist_winid() then -- open the qflist first.
     vim.cmd('copen')
   end
-  if vim.fn.getqflist({ title = 0 }).title ~= NAME_OF_THE_LIST then
-    switch_to_the_qflist()
-    return
-  end
-  vim.cmd('cclose')
+  switch_to_the_qflist()
 end
 
 local function setup_vim_commands()
