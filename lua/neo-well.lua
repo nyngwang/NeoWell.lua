@@ -89,6 +89,7 @@ end
 
 function M.neo_well_jump()
   if not cursor_on_the_qflist() then return end
+  if #vim.fn.getqflist({ items = 0 }).items == 0 then return end
   vim.cmd('cc ' .. vim.fn.line('.'))
   pin_to_80_percent_height()
   pin_to_80_percent_height() -- we need to do it fucking twice ¯\_(ツ)_/¯.
