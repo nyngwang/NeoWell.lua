@@ -122,6 +122,7 @@ function M.neo_well_out()
     end
   end
   vim.fn.setqflist({}, 'r', { items = new_items })
+  vim.cmd('normal! j') -- move the the next item
 end
 
 local function setup_vim_commands()
