@@ -34,6 +34,13 @@ local function get_qflist_winid(id) -- return `nil` if not opened.
   return winid > 0 and winid or nil
 end
 
+local function cursor_on_the_qflist()
+  if vim.bo.buftype ~= 'quickfix' -- if not hover
+    or vim.fn.getqflist({ id = 0 }).id ~= vim.fn.getqflist({ id = get_the_qflist_id() }).id -- or not on NeoWell
+    then return false end
+  return true
+end
+
 local function pin_to_80_percent_height()
   local scrolloff = 7
   local cur_line = vim.fn.line('.')
@@ -43,11 +50,9 @@ local function pin_to_80_percent_height()
   end
 end
 ---------------------------------------------------------------------------------------------------
-
 function M.setup(opts)
   M.height = opts.height and opts.height or 7
 end
-
 ---------------------------------------------------------------------------------------------------
 function M.neo_well_toggle()
   if get_qflist_winid() and vim.fn.getqflist({ title = 0 }).title == NAME_OF_THE_LIST then
@@ -64,7 +69,7 @@ function M.neo_well_toggle()
 end
 
 function M.neo_well_append()
-  if vim.bo.buftype == 'quickfix' then return end
+  if not cursor_on_the_qflist() then return end
   local input = vim.fn.input('Well ... ')
   if input == '' or input:match('^%s+$') then -- nothing added.
     print('cancelled.')
@@ -83,12 +88,14 @@ function M.neo_well_append()
 end
 
 function M.neo_well_jump()
-  if vim.bo.buftype ~= 'quickfix' -- if not hover
-    or vim.fn.getqflist({ id = 0 }).id ~= vim.fn.getqflist({ id = get_the_qflist_id() }).id -- or not on NeoWell
-    then return end
+  if not cursor_on_the_qflist() then return end
   vim.cmd('cc ' .. vim.fn.line('.'))
   pin_to_80_percent_height()
   pin_to_80_percent_height() -- we need to do it fucking twice ¯\_(ツ)_/¯.
+end
+
+function M.neo_well_edit()
+  if not cursor_on_the_qflist() then return end
 end
 
 local function setup_vim_commands()
@@ -96,6 +103,7 @@ local function setup_vim_commands()
     command! NeoWellToggle lua require'neo-well'.neo_well_toggle()
     command! NeoWellAppend lua require'neo-well'.neo_well_append()
     command! NeoWellJump lua require'neo-well'.neo_well_jump()
+    command! NeoWellEdit lua require'neo-well'.neo_well_edit()
   ]]
 end
 
