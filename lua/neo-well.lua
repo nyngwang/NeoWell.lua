@@ -33,7 +33,6 @@ local function get_qflist_winid(id) -- return `nil` if not opened.
   local winid = vim.fn.getqflist({ id = (id and id or 0), winid = 0 }).winid
   return winid > 0 and winid or nil
 end
-
 ---------------------------------------------------------------------------------------------------
 
 function M.setup(opts)
@@ -44,6 +43,7 @@ end
 function M.neo_well_toggle()
   if get_qflist_winid() and vim.fn.getqflist({ title = 0 }).title == NAME_OF_THE_LIST then
     vim.cmd('cclose')
+    vim.cmd('wincmd p')
     return
   end
   if not get_qflist_winid() then -- open the qflist first.
