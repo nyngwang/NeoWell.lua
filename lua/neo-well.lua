@@ -106,12 +106,26 @@ function M.neo_well_edit()
   vim.fn.setqflist({}, 'r', { items = items })
 end
 
+function M.neo_well_out()
+  if not cursor_on_the_qflist() then return end
+  local idx = vim.fn.line('.')
+  local items = vim.fn.getqflist({ items = 0 }).items
+  local new_items = {}
+  for _idx, item in ipairs(items) do
+    if _idx ~= idx then
+      table.insert(new_items, item)
+    end
+  end
+  vim.fn.setqflist({}, 'r', { items = new_items })
+end
+
 local function setup_vim_commands()
   vim.cmd [[
     command! NeoWellToggle lua require'neo-well'.neo_well_toggle()
     command! NeoWellAppend lua require'neo-well'.neo_well_append()
     command! NeoWellJump lua require'neo-well'.neo_well_jump()
     command! NeoWellEdit lua require'neo-well'.neo_well_edit()
+    command! NeoWellOut lua require'neo-well'.neo_well_out()
   ]]
 end
 
