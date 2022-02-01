@@ -35,13 +35,19 @@ local function get_qflist_winid(id) -- return `nil` if not opened.
 end
 
 ---------------------------------------------------------------------------------------------------
+
+function M.setup(opts)
+  M.height = opts.height and opts.height or 7
+end
+
+---------------------------------------------------------------------------------------------------
 function M.neo_well_toggle()
   if get_qflist_winid() and vim.fn.getqflist({ title = 0 }).title == NAME_OF_THE_LIST then
     vim.cmd('cclose')
     return
   end
   if not get_qflist_winid() then -- open the qflist first.
-    vim.cmd('copen')
+    vim.cmd('copen ' .. M.height)
     vim.cmd('wincmd J')
   end
   switch_to_the_qflist()
