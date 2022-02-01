@@ -110,10 +110,6 @@ function M.neo_well_out()
   if not cursor_on_the_qflist() then return end
   local idx = vim.fn.line('.')
   local items = vim.fn.getqflist({ items = 0 }).items
-  if #items == 0 then
-    vim.cmd('cclose')
-    return
-  end
   if not vim.fn.input('Confirm delete item ' .. idx .. '([Yy]/n): '):match('[Yy]') then return end
   local new_items = {}
   for _idx, item in ipairs(items) do
@@ -125,6 +121,12 @@ function M.neo_well_out()
   vim.cmd('normal! j') -- move the the next item
 end
 
+function M.neo_well_wipeout()
+  if not cursor_on_the_qflist() then return end
+  if not vim.fn.input('[WARNING] Confirm delete ALL items ([Yy]/n): '):match('[Yy]') then return end
+  vim.fn.setqflist({}, 'r', { items = {} })
+end
+
 local function setup_vim_commands()
   vim.cmd [[
     command! NeoWellToggle lua require'neo-well'.neo_well_toggle()
@@ -132,6 +134,7 @@ local function setup_vim_commands()
     command! NeoWellJump lua require'neo-well'.neo_well_jump()
     command! NeoWellEdit lua require'neo-well'.neo_well_edit()
     command! NeoWellOut lua require'neo-well'.neo_well_out()
+    command! NeoWellWipeOut lua require'neo-well'.neo_well_wipeout()
   ]]
 end
 
