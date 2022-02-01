@@ -59,6 +59,7 @@ vim.keymap.set('n', '<Leader>D', function () vim.cmd('NeoWellWipeOut') end, NORE
 ### Future
 
 - [ ] filter via text
+- [ ] stablize when toggling
 - [ ] prompt: edit list title (not important so far)
 - [ ] wrap-around on the first/last item (not important so far)
 
