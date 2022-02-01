@@ -56,7 +56,7 @@ end
 
 function M.neo_well_append()
   local input = vim.fn.input('Well ... ')
-  if input == '' or input:match('%s+') then -- nothing added.
+  if input == '' or input:match('^%s+$') then -- nothing added.
     print('cancelled.')
   end
   vim.fn.setqflist({}, 'a', {
