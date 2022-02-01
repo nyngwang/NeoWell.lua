@@ -54,9 +54,28 @@ function M.neo_well_toggle()
   switch_to_the_qflist()
 end
 
+function M.neo_well_append()
+  local input = vim.fn.input('Well ... ')
+  if input == '' or input:match('%s+') then -- nothing added.
+    print('cancelled.')
+  end
+  vim.fn.setqflist({}, 'a', {
+    id = get_the_qflist_id(),
+    items = {
+      {
+        filename = vim.fn.bufname(),
+        lnum = vim.fn.line('.'),
+        col = vim.api.nvim_win_get_cursor(0)[2]+1,
+        text = input
+      }
+    }
+  })
+end
+
 local function setup_vim_commands()
   vim.cmd [[
     command! NeoWellToggle lua require'neo-well'.neo_well_toggle()
+    command! NeoWellAppend lua require'neo-well'.neo_well_append()
   ]]
 end
 
