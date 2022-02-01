@@ -114,8 +114,7 @@ function M.neo_well_out()
     vim.cmd('cclose')
     return
   end
-  local input = vim.fn.input('Confirm delete item ' .. idx .. '(y/n): ')
-  if not input:match('[Yy](es)?') then return end
+  if not vim.fn.input('Confirm delete item ' .. idx .. '([Yy]/n): '):match('[Yy]') then return end
   local new_items = {}
   for _idx, item in ipairs(items) do
     if _idx ~= idx then
