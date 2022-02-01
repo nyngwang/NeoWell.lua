@@ -99,6 +99,9 @@ function M.neo_well_edit()
   local idx = vim.fn.line('.')
   local items = vim.fn.getqflist({ items = 0 }).items
   local input = vim.fn.input('Enter your new comment: ')
+  if input == '' or input:match('^%s+$') then -- nothing added.
+    print('cancelled.')
+  end
   items[idx].text = input
   vim.fn.setqflist({}, 'r', { items = items })
 end
