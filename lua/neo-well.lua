@@ -88,7 +88,7 @@ function M.neo_well_jump()
     then return end
   vim.cmd('cc ' .. vim.fn.line('.'))
   pin_to_80_percent_height()
-  pin_to_80_percent_height()
+  pin_to_80_percent_height() -- we need to do it fucking twice ¯\_(ツ)_/¯.
 end
 
 local function setup_vim_commands()
