@@ -8,7 +8,7 @@ local M = {}
 
 
 local function total_qflists()
-  return vim.fn.getqflist({ nr = '$' })
+  return vim.fn.getqflist({ nr = '$' }).nr
 end
 
 local function get_the_qflist_id()
