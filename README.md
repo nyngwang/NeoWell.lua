@@ -3,9 +3,22 @@ NeoWell.lua
 
 ### Features
 
+- Toggle the only NeoWell list
+  - Leave existing ones **intact**
+
+
+### Usage
+
+#### Toggle the list
+
+```lua
+vim.keymap.set('n', '\\', function () vim.cmd('NeoWellToggle') end, NOREF_NOERR_TRUNC)
+-- :NeoWellToggle
+```
+
 ### TODO list
 
-- [ ] toggle the list
+- [x] toggle the list
 - [ ] prompt: to add the current line into items
 - [ ] buffer command:
   - [ ] goto item
