@@ -83,7 +83,7 @@ end
 
 function M.neo_well_jump()
   if vim.bo.buftype ~= 'quickfix' -- if not hover
-    or vim.fn.getqflist({ id = 0 }).id ~= vim.fn.getqflist({ id = get_the_qflist_id() }) -- or not on NeoWell
+    or vim.fn.getqflist({ id = 0 }).id ~= vim.fn.getqflist({ id = get_the_qflist_id() }).id -- or not on NeoWell
     then return end
   vim.cmd('cc ' .. vim.fn.line('.'))
   pin_to_80_percent_height()
