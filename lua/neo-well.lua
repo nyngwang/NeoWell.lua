@@ -33,6 +33,15 @@ local function get_qflist_winid(id) -- return `nil` if not opened.
   local winid = vim.fn.getqflist({ id = (id and id or 0), winid = 0 }).winid
   return winid > 0 and winid or nil
 end
+
+local function pin_to_80_percent_height()
+  local scrolloff = 7
+  local cur_line = vim.fn.line('.')
+  vim.cmd("normal! zt")
+  if (cur_line > scrolloff) then
+    vim.cmd("normal! " .. scrolloff .. "k" .. scrolloff .. "j")
+  end
+end
 ---------------------------------------------------------------------------------------------------
 
 function M.setup(opts)
@@ -72,10 +81,19 @@ function M.neo_well_append()
   })
 end
 
+function M.neo_well_jump()
+  if vim.bo.buftype ~= 'quickfix' -- if not hover
+    or vim.fn.getqflist({ id = 0 }).id ~= vim.fn.getqflist({ id = get_the_qflist_id() }) -- or not on NeoWell
+    then return end
+  vim.cmd('cc ' .. vim.fn.line('.'))
+  pin_to_80_percent_height()
+end
+
 local function setup_vim_commands()
   vim.cmd [[
     command! NeoWellToggle lua require'neo-well'.neo_well_toggle()
     command! NeoWellAppend lua require'neo-well'.neo_well_append()
+    command! NeoWellJump lua require'neo-well'.neo_well_jump()
   ]]
 end
 
