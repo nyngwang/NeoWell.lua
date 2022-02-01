@@ -25,12 +25,25 @@ local function get_the_qflist_id()
   return get_the_qflist_id()
 end
 
-local function qflist_is_open()
+local function switch_to_the_qflist()
+  vim.cmd('chi ' .. vim.fn.getqflist({ id = get_the_qflist_id(), nr = 0 }).nr)
+end
+
+local function get_qflist_winid(id) -- return `nil` if not opened.
+  local winid = vim.fn.getqflist({ id = (id and id or 0), winid = 0 }).winid
+  return winid > 0 and winid or nil
 end
 
 ---------------------------------------------------------------------------------------------------
 function M.neo_well_toggle()
-  vim.cmd()
+  if not get_qflist_winid() then -- open the qflist first.
+    vim.cmd('copen')
+  end
+  if vim.fn.getqflist({ title = 0 }).title ~= NAME_OF_THE_LIST then
+    switch_to_the_qflist()
+    return
+  end
+  vim.cmd('cclose')
 end
 
 local function setup_vim_commands()
