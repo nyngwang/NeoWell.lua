@@ -56,10 +56,17 @@ vim.keymap.set('n', '<Leader>D', function () vim.cmd('NeoWellWipeOut') end, NORE
   - [x] prompt: confirm delete all items
 
 
-### Future
+### Future & Ref.
 
+#### Will do
 - [ ] filter via text
+  - [jeetsukumaran/quickfix-rex.nvim](https://github.com/jeetsukumaran/quickfix-rex.nvim)
+  - [itchyny/vim-qfedit](https://github.com/itchyny/vim-qfedit)
+- [ ] export todo to a file
+
+#### ??????
 - [ ] stablize when toggling
 - [ ] prompt: edit list title (not important so far)
 - [ ] wrap-around on the first/last item (not important so far)
+  - [ten3roberts/qf.nvim](https://github.com/ten3roberts/qf.nvim)
 
