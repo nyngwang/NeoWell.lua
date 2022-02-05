@@ -113,7 +113,7 @@ function M.neo_well_out()
   if not cursor_on_the_qflist() then return end
   local idx = vim.fn.line('.')
   local items = vim.fn.getqflist({ items = 0 }).items
-  if not vim.fn.input('Confirm delete item ' .. idx .. '([Yy]/n): '):match('[Yy]') then return end
+  if not vim.fn.input('Confirm delete item ' .. idx .. '([Yy]/n): '):match('^[Yy]$') then return end
   local new_items = {}
   for _idx, item in ipairs(items) do
     if _idx ~= idx then
@@ -126,7 +126,7 @@ end
 
 function M.neo_well_wipeout()
   if not cursor_on_the_qflist() then return end
-  if not vim.fn.input('[WARNING] Confirm delete ALL items ([Yy]/n): '):match('[Yy]') then return end
+  if not vim.fn.input('[WARNING] Confirm delete ALL items ([Yy]/n): '):match('^[Yy]$') then return end
   vim.fn.setqflist({}, 'r', { items = {} })
 end
 
