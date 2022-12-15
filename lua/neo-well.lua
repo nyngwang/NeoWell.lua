@@ -1,116 +1,97 @@
-local NOREF_NOERR_TRUNC = { noremap = true, silent = true, nowait = true }
-local NOREF_NOERR = { noremap = true, silent = true }
-local EXPR_NOREF_NOERR_TRUNC = { expr = true, noremap = true, silent = true, nowait = true }
 ---------------------------------------------------------------------------------------------------
-NAME_OF_THE_LIST = 'NeoWell'
-
 local M = {}
+NAME_OF_THE_LIST = 'NeoWell'
 
 
 local function total_qflists()
-  return vim.fn.getqflist({ nr = '$' }).nr
+  return vim.fn.getqflist({ nr='$' }).nr
 end
 
-local function get_the_qflist_id()
+local function get_the_menu_id()
   for i = 1, total_qflists() do
-    if vim.fn.getqflist({ nr = i, title = 0 }).title == NAME_OF_THE_LIST then -- the list has been initialized.
-      return vim.fn.getqflist({ nr = i, id = 0 }).id
-    end
+    if vim.fn.getqflist({ nr=i, title=0 }).title == NAME_OF_THE_LIST
+      then return vim.fn.getqflist({ nr=i, id=0 }).id end
   end
-  -- init
-  local signal = vim.fn.setqflist({}, ' ', { nr = '$', title = NAME_OF_THE_LIST })
+  local signal = vim.fn.setqflist({}, ' ', { nr='$', title=NAME_OF_THE_LIST })
   if signal ~= 0 then
-    print('NeoWell: Failed in creation...!')
+    print('NeoWell: Failed to create the menu!')
+    return nil
   end
-  return get_the_qflist_id()
+  return get_the_menu_id()
 end
 
-local function switch_to_the_qflist()
-  vim.cmd('chi ' .. vim.fn.getqflist({ id = get_the_qflist_id(), nr = 0 }).nr)
+local function the_menu_did_build()
+  return get_the_menu_id()
 end
 
-local function get_qflist_winid(id) -- return `nil` if not opened.
-  local winid = vim.fn.getqflist({ id = (id and id or 0), winid = 0 }).winid
+local function switch_to_the_menu()
+  vim.cmd('chi ' .. vim.fn.getqflist({ id=get_the_menu_id(), nr=0 }).nr)
+end
+
+local function get_the_menu_winid() -- return `nil` if not opened.
+  local id = get_the_menu_id()
+  if not id then return nil end
+  local winid = vim.fn.getqflist({ id=id, winid=0 }).winid
   return winid > 0 and winid or nil
 end
 
-local function cursor_on_the_qflist()
-  if vim.bo.buftype ~= 'quickfix' -- if not hover
-    or vim.fn.getqflist({ id = 0 }).id ~= vim.fn.getqflist({ id = get_the_qflist_id() }).id -- or not on NeoWell
-    then return false end
-  return true
+local function the_menu_is_open()
+  return get_the_menu_winid()
 end
 
-local function pin_to_80_percent_height()
-  local scrolloff = 7
-  local cur_line = vim.fn.line('.')
-  vim.cmd("normal! zt")
-  if (cur_line > scrolloff) then
-    vim.cmd("normal! " .. scrolloff .. "k" .. scrolloff .. "j")
-  else
-    vim.cmd('normal!' .. (cur_line-1) .. 'k' .. (cur_line-1) .. 'j')
-  end
+local function cursor_is_at_the_menu()
+  if get_the_menu_winid() == vim.api.nvim_get_current_win() then return true end
+  return false
 end
+
 ---------------------------------------------------------------------------------------------------
 function M.setup(opts)
-  M.height = opts.height and opts.height or 7
+  M.menu_height = opts.height or 7
+  M.split_on_top = opts.split_on_top or true
 end
 ---------------------------------------------------------------------------------------------------
 function M.neo_well_toggle()
-  if get_qflist_winid() and vim.fn.getqflist({ title = 0 }).title == NAME_OF_THE_LIST then
-    vim.cmd('cclose')
-    vim.cmd('wincmd p')
-    return
+  if the_menu_is_open() then vim.cmd('ccl') return end
+  if the_menu_did_build() then
+    local pos = M.split_on_top and 'top' or 'bot'
+    vim.cmd(string.format('%s copen %d', pos, M.menu_height))
+    switch_to_the_menu()
   end
-  if not get_qflist_winid() then -- open the qflist first.
-    vim.cmd('copen')
-    vim.cmd('wincmd H | wincmd J')
-    vim.cmd(M.height .. ' wincmd _')
-  end
-  switch_to_the_qflist()
 end
 
 function M.neo_well_append()
   if vim.bo.buftype == 'quickfix' then return end
-  local input = vim.fn.input('Well ... ')
+  local input = vim.fn.input('NeoWell: Well, I think this line ... ')
   if input == '' or input:match('^%s+$') then -- nothing added.
     print('cancelled.')
   end
   vim.fn.setqflist({}, 'a', {
-    id = get_the_qflist_id(),
+    id = get_the_menu_id(),
     items = {
       {
         filename = vim.fn.bufname(),
         lnum = vim.fn.line('.'),
-        col = vim.api.nvim_win_get_cursor(0)[2]+1,
+        col = vim.fn.col('.'),
         text = input
       }
     }
   })
 end
 
-function M.neo_well_jump()
-  if not cursor_on_the_qflist() then return end
-  if #vim.fn.getqflist({ items = 0 }).items == 0 then return end
-  vim.cmd('cc ' .. vim.fn.line('.'))
-  pin_to_80_percent_height()
-  pin_to_80_percent_height() -- we need to do it fucking twice ¯\_(ツ)_/¯.
-end
-
 function M.neo_well_edit()
-  if not cursor_on_the_qflist() then return end
+  if not cursor_is_at_the_menu() then return end
   local idx = vim.fn.line('.')
-  local items = vim.fn.getqflist({ items = 0 }).items
+  local items = vim.fn.getqflist({ items=0 }).items
   local input = vim.fn.input('Enter your new comment: ')
   if input == '' or input:match('^%s+$') then -- nothing added.
     print('cancelled.')
   end
   items[idx].text = input
-  vim.fn.setqflist({}, 'r', { items = items })
+  vim.fn.setqflist({}, 'r', { items=items })
 end
 
 function M.neo_well_out()
-  if not cursor_on_the_qflist() then return end
+  if not cursor_is_at_the_menu() then return end
   local idx = vim.fn.line('.')
   local items = vim.fn.getqflist({ items = 0 }).items
   if not vim.fn.input('Confirm delete item ' .. idx .. '([Yy]/n): '):match('^[Yy]$') then return end
@@ -125,7 +106,7 @@ function M.neo_well_out()
 end
 
 function M.neo_well_wipeout()
-  if not cursor_on_the_qflist() then return end
+  if not cursor_is_at_the_menu() then return end
   if not vim.fn.input('[WARNING] Confirm delete ALL items ([Yy]/n): '):match('^[Yy]$') then return end
   vim.fn.setqflist({}, 'r', { items = {} })
 end
@@ -134,9 +115,8 @@ local function setup_vim_commands()
   vim.cmd [[
     command! NeoWellToggle lua require'neo-well'.neo_well_toggle()
     command! NeoWellAppend lua require'neo-well'.neo_well_append()
-    command! NeoWellJump lua require'neo-well'.neo_well_jump()
-    command! NeoWellEdit lua require'neo-well'.neo_well_edit()
     command! NeoWellOut lua require'neo-well'.neo_well_out()
+    command! NeoWellEdit lua require'neo-well'.neo_well_edit()
     command! NeoWellWipeOut lua require'neo-well'.neo_well_wipeout()
   ]]
 end
