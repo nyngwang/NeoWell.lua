@@ -48,7 +48,7 @@ end
 function M.setup(opts)
   M.menu_height = opts.height or 7
   M.split_on_top = opts.split_on_top
-    if not M.split_on_top then M.split_on_top = true end
+    if M.split_on_top == nil then M.split_on_top = true end
 end
 ---------------------------------------------------------------------------------------------------
 function M.neo_well_toggle()
